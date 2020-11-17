@@ -19,8 +19,8 @@
                 </th></tr>
             </thead>
             <tbody>
-                <tr is="properties-item"
-                    v-for="(item, index) in newProperties"
+                <tr is="application-item"
+                    v-for="(item, index) in newApplication"
                     :key="index"
                     :index="index"
                     :item="item"
@@ -30,15 +30,15 @@
         </table>
 
         <h1>Profiles Info</h1>
-        <table id="propertiesInfo" class="table table-striped table-hover">
+        <table id="applicationInfo" class="table table-striped table-hover">
             <thead>
                 <tr><th class="wp4">Application</th><th class="wp3">Profile</th>
                     <th class="wp3">Label</th><th class="wp1">Operations</th></tr>
             </thead>
             <tbody>
-                <tr th:each="p,s : ${propertiesList}" th:data-pro-index="${s.index}" class="te ro">
+                <tr th:each="p,s : ${applicationList}" th:data-pro-index="${s.index}" class="te ro">
                     <td>
-                        <input type="text" readonly name="application" th:value="${p.application}"/>
+                        <input type="text" readonly name="name" th:value="${p.name}"/>
                     </td>
                     <td>
                         <input type="text" readonly name="profile" th:value="${p.profile}"/>
@@ -53,7 +53,7 @@
                         <a href="javascript:void(0);" class="off" @click="save($event)">Save</a>
 
                         <a th:href="@{/config/detail/{id}(id=${p.id})}" target="_blank" class="on">Detail</a>
-                        <!--<a th:href="@{/{prefix}/{a}/{p}/{l}(prefix=${prefix},a=${p.application},p=${p.profile},l=${p.label})}" target="_blank" class="on">JSON</a>-->
+                        <!--<a th:href="@{/{prefix}/{a}/{p}/{l}(prefix=${prefix},a=${p.name},p=${p.profile},l=${p.label})}" target="_blank" class="on">JSON</a>-->
                         <a href="javascript:void(0);" th:data-prefix="@{/{prefix}(prefix=${prefix})}" target="_blank" class="on" @click="goJson($event)">JSON</a>
                     </td>
                 </tr>
@@ -64,10 +64,10 @@
     <script type="text/javascript" th:src="@{/res/static/js/wro.js}"></script>
     <script type="text/javascript" th:src="@{/res/static/js/vue.min.js}"></script>
     <script type="text/javascript" th:inline="javascript">
-        Vue.component('properties-item', {
+        Vue.component('application-item', {
             template: `
             <tr class="te">
-                <td><input type="text" v-model="item.application"/></td>
+                <td><input type="text" v-model="item.name"/></td>
                 <td><input type="text" v-model="item.profile"/></td>
                 <td><input type="text" v-model="item.label"/></td>
                 <td><a href="javascript:void(0);" @click="$emit(\'click\')">Delete</a></td>
@@ -79,19 +79,19 @@
         new Vue({
             el: '#cx-container',
             data() {
-                let proList = [[${propertiesList}]] || [];
-                proList.map(it => it.ro = true);
+                let appList = [[${applicationList}]] || [];
+                appList.map(it => it.ro = true);
 
                 return {
-                    newProperties: [{ application: null, profile: null, label: null }],
-                    proList
+                    newApplication: [{ name: null, profile: null, label: null }],
+                    appList
                 };
             },
             methods: {
                 isReadonly(event) {
                     const pr = $(event.target).parents('tr');
                     const ind = pr.data('pro-index');
-                    let pro = this.proList[ind];
+                    let pro = this.appList[ind];
 
                     pro.ro = !pro.ro;
 
@@ -101,23 +101,23 @@
                 save(event) {
                     const pr = $(event.target).parents('tr');
                     const ind = pr.data('pro-index');
-                    let pro = this.proList[ind];
+                    let app = this.appList[ind];
 
-                    let proNew = {};
-                    pr.find('td input').each((i, it) => proNew[it.name] = String.trim(it.value));
+                    let appNew = {};
+                    pr.find('td input').each((i, it) => appNew[it.name] = it.value.trim());
 
-                    if (pro.application == proNew.application
-                        && pro.profile == proNew.profile && pro.label == proNew.label) {
+                    if (app.name == appNew.name
+                        && app.profile == appNew.profile && app.label == appNew.label) {
                         // reset value
-                        pr.find('td input').each((i, it) => it.value = pro[it.name]);
-                        pro.ro = !pro.ro;
+                        pr.find('td input').each((i, it) => it.value = app[it.name]);
+                        app.ro = !app.ro;
                     } else {
                         $.ajax({
                             url: '/config/save',
                             method: 'post',
-                            data: Object.assign(pro, proNew),
+                            data: Object.assign(app, appNew),
                             success: function() {
-                                pro.ro = !pro.ro;
+                                app.ro = !app.ro;
                             }
                         });
                     }
@@ -126,7 +126,7 @@
                     $.ajax({
                         url: '/config/save/all',
                         method: 'post',
-                        data: JSON.stringify(this.newProperties),
+                        data: JSON.stringify(this.newApplication),
                         // dataType: 'json',
                         contentType: 'application/json;charset=UTF-8',
                         success: function() {
@@ -135,23 +135,23 @@
                     });
                 },
                 increase() {
-                    this.newProperties.push({ application: null, profile: null, label: null });
+                    this.newApplication.push({ name: null, profile: null, label: null });
                 },
                 reduce(index) {
-                    this.newProperties.splice(index, 1);
+                    this.newApplication.splice(index, 1);
                 },
                 goJson(event) {
                     const pr = $(event.target).parents('tr');
                     const ind = pr.data('pro-index');
-                    let pro = this.proList[ind];
+                    let app = this.appList[ind];
                     const prf = $(event.target).data('prefix');
-                    $(event.target).attr('href', `${prf=='/'?'':prf}/${pro.application}/${pro.profile}/${pro.label}`);
+                    $(event.target).attr('href', `${prf=='/'?'':prf}/${app.name}/${app.profile}/${app.label}`);
                 }
             },
             created() {
-                $('table#propertiesInfo tbody tr').removeClass('ro').each((ind, it) => {
+                $('table#applicationInfo tbody tr').removeClass('ro').each((ind, it) => {
                     let ele = $(it);
-                    const attr = `proList[${ind}].ro`;
+                    const attr = `appList[${ind}].ro`;
 
                     ele.attr(':class', `{ ro: ${attr} }`).find('input').attr(':readonly', attr);
                     ele.find('a.on').attr('v-show', attr);

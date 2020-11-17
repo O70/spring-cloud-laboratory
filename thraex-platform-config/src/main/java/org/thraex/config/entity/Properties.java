@@ -21,10 +21,10 @@ public class Properties implements Serializable {
     @GenericGenerator(name = "idStrategy", strategy = "uuid")
     private String id;
 
-    private String application;
+    private String pid;
 
-    private String profile;
+    private String attribute;
 
-    private String label;
+    private String value;
 
 }

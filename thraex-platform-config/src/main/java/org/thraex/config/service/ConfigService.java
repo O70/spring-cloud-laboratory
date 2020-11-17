@@ -1,6 +1,6 @@
 package org.thraex.config.service;
 
-import org.thraex.config.entity.KeyValue;
+import org.thraex.config.entity.Application;
 import org.thraex.config.entity.Properties;
 
 import java.util.List;
@@ -11,25 +11,25 @@ import java.util.List;
  */
 public interface ConfigService {
 
-    void save(Properties properties);
+    Application save(Application application);
 
-    void save(List<Properties> proList);
+    List<Application> save(List<Application> appList);
 
     void delete(String id);
 
-    Properties findById(String id);
+    Application findById(String id);
 
-    List<Properties> findAll();
+    List<Application> findAll();
 
     @Deprecated
-    List<Properties> findByGroup();
+    List<Application> findByGroup();
 
-    List<KeyValue> findByPid(String pid);
+    List<Properties> findByPid(String pid);
 
-    void saveKv(KeyValue kv);
+    Properties saveProperties(Properties properties);
 
-    void saveKv(List<KeyValue> kvList);
+    List<Properties> saveProperties(List<Properties> propList);
 
-    void deleteKv(String id);
+    void deleteProperties(String id);
 
 }

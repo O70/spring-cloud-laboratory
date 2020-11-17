@@ -14,16 +14,17 @@ import java.io.Serializable;
  */
 @Data
 @Entity
-public class KeyValue implements Serializable {
+public class Application implements Serializable {
 
     @Id
     @GeneratedValue(generator = "idStrategy")
     @GenericGenerator(name = "idStrategy", strategy = "uuid")
     private String id;
 
-    private String pid;
+    private String name;
 
-    private String pkey;
+    private String profile;
 
-    private String pvalue;
+    private String label;
+
 }

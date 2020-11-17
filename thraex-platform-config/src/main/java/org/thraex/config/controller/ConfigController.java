@@ -1,11 +1,7 @@
 package org.thraex.config.controller;
 
-import org.thraex.config.entity.KeyValue;
-import org.thraex.config.entity.Properties;
-import org.thraex.config.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thraex.config.entity.Application;
+import org.thraex.config.entity.Properties;
+import org.thraex.config.service.ConfigService;
 
 import java.util.List;
 
@@ -41,16 +40,14 @@ public class ConfigController {
 
     @PostMapping("save")
     @ResponseBody
-    public ResponseEntity<Properties> save(Properties properties) {
-        configService.save(properties);
-        return new ResponseEntity(properties, HttpStatus.OK);
+    public ResponseEntity<Application> save(Application application) {
+        return ResponseEntity.ok(configService.save(application));
     }
 
     @PostMapping("save/all")
     @ResponseBody
-    public ResponseEntity saveAll(@RequestBody List<Properties> proList) {
-        configService.save(proList);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<List<Application>> saveAll(@RequestBody List<Application> appList) {
+        return ResponseEntity.ok(configService.save(appList));
     }
 
     @GetMapping("delete/{id}")
@@ -61,28 +58,26 @@ public class ConfigController {
 
     @GetMapping("detail/{pid}")
     public String detail(@PathVariable String pid, Model model) {
-        model.addAttribute(configService.findById(pid));
+        model.addAttribute("app", configService.findById(pid));
         model.addAttribute(configService.findByPid(pid));
         return "detail";
     }
 
     @PostMapping("detail/save")
     @ResponseBody
-    public ResponseEntity<KeyValue> saveKv(KeyValue keyValue) {
-        configService.saveKv(keyValue);
-        return new ResponseEntity(keyValue, HttpStatus.OK);
+    public ResponseEntity<Properties> saveProperties(Properties properties) {
+        return ResponseEntity.ok(configService.saveProperties(properties));
     }
 
     @PostMapping("detail/save/all")
     @ResponseBody
-    public ResponseEntity saveKvAll(@RequestBody List<KeyValue> kvList) {
-        configService.saveKv(kvList);
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity<List<Properties>> saveProperties(@RequestBody List<Properties> propList) {
+        return ResponseEntity.ok(configService.saveProperties(propList));
     }
 
     @GetMapping("detail/delete/{pid}/{id}")
-    public String deleteKv(@PathVariable String pid, @PathVariable String id) {
-        configService.deleteKv(id);
+    public String deleteProperties(@PathVariable String pid, @PathVariable String id) {
+        configService.deleteProperties(id);
         return "redirect:/config/detail/"+pid;
     }
 

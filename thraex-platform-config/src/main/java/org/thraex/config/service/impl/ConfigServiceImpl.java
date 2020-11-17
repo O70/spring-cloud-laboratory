@@ -1,20 +1,19 @@
 package org.thraex.config.service.impl;
 
-import org.thraex.config.entity.KeyValue;
-import org.thraex.config.entity.Properties;
-import org.thraex.config.repository.KeyValueRepository;
-import org.thraex.config.repository.PropertiesRepository;
-import org.thraex.config.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.thraex.config.entity.Application;
+import org.thraex.config.entity.Properties;
+import org.thraex.config.repository.ApplicationRepository;
+import org.thraex.config.repository.PropertiesRepository;
+import org.thraex.config.service.ConfigService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -25,78 +24,76 @@ import java.util.stream.Collectors;
 public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
-    private PropertiesRepository propertiesRepository;
+    private ApplicationRepository applicationRepository;
 
     @Autowired
-    private KeyValueRepository keyValueRepository;
+    private PropertiesRepository propertiesRepository;
 
     @Override
-    public void save(Properties properties) {
-        propertiesRepository.save(properties);
+    public Application save(Application application) {
+        return applicationRepository.save(application);
     }
 
     @Override
-    public void save(List<Properties> proList) {
-        propertiesRepository.saveAll(proList);
+    public List<Application> save(List<Application> appList) {
+        return applicationRepository.saveAll(appList);
     }
 
     @Override
     @Transactional
     public void delete(String id) {
-        propertiesRepository.deleteById(id);
-        keyValueRepository.deleteByPid(id);
+        applicationRepository.deleteById(id);
+        propertiesRepository.deleteByPid(id);
     }
 
     @Override
-    public Properties findById(String id) {
-        Optional<Properties> op = propertiesRepository.findById(id);
-        return op.isPresent()?op.get():null;
+    public Application findById(String id) {
+        return applicationRepository.findById(id).orElse(null);
     }
 
     @Override
-    public List<Properties> findAll() {
-        return propertiesRepository.findAll(Sort.by("application", "profile", "label"));
+    public List<Application> findAll() {
+        return applicationRepository.findAll(Sort.by("name", "profile", "label"));
     }
 
     @Override
-    public List<Properties> findByGroup() {
-        Map<String, List<Properties>> collect = this.findAll().stream().collect(
-                Collectors.groupingBy(it -> it.getApplication() + "/" + it.getProfile() + "/" + it.getLabel()));
-        List<Properties> result = new ArrayList<>();
+    public List<Application> findByGroup() {
+        Map<String, List<Application>> collect = this.findAll().stream().collect(
+                Collectors.groupingBy(it -> it.getName() + "/" + it.getProfile() + "/" + it.getLabel()));
+        List<Application> result = new ArrayList<>();
         collect.forEach((k, v) -> {
             String[] split = k.split("/");
-            Properties p = new Properties();
+            Application p = new Application();
             p.setId(k);
-            p.setApplication(split[0]);
+            p.setName(split[0]);
             p.setProfile(split[1]);
             p.setLabel(split[2]);
-            //p.setItems(v);
             result.add(p);
         });
 
-        return result.stream().sorted(Comparator.comparing(Properties::getApplication)
-                .thenComparing(Properties::getProfile).thenComparing(Properties::getLabel))
+        return result.stream().sorted(Comparator.comparing(Application::getName)
+                .thenComparing(Application::getProfile).thenComparing(Application::getLabel))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<KeyValue> findByPid(String pid) {
-        return keyValueRepository.findByPidOrderByPkeyAscPvalueAsc(pid);
+    public List<Properties> findByPid(String pid) {
+        return propertiesRepository.findByPidOrderByAttributeAscValueAsc(pid);
     }
 
     @Override
-    public void saveKv(KeyValue kv) {
-        keyValueRepository.save(kv);
+    public Properties saveProperties(Properties properties) {
+        return propertiesRepository.save(properties);
     }
 
     @Override
-    public void saveKv(List<KeyValue> kvList) {
-        keyValueRepository.saveAll(kvList);
+    public List<Properties> saveProperties(List<Properties> propList) {
+        return propertiesRepository.saveAll(propList);
     }
 
     @Override
-    public void deleteKv(String id) {
-        keyValueRepository.deleteById(id);
+    public void deleteProperties(String id) {
+        propertiesRepository.deleteById(id);
     }
 
 }

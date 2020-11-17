@@ -1,16 +1,21 @@
 spring:
+  profiles:
+    active: jdbc
   application:
     name: thraex-platform-config
   datasource:
+    name: THRAEX-DB
 #    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/thraex-config?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/thraex-config?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/thraex-config
     username: root
     password: mysql
   cloud:
     config:
       server:
         jdbc:
-          sql: SELECT pkey, pvalue FROM key_value WHERE pid IN (SELECT id FROM properties WHERE application=? AND profile=? AND label=?) ORDER BY pkey, pvalue
+          sql: SELECT attribute, value FROM properties WHERE pid IN (SELECT id FROM application WHERE name = ? AND profile = ? AND label = ?) ORDER BY attribute, value
   jpa:
     database: mysql
     show-sql: true
