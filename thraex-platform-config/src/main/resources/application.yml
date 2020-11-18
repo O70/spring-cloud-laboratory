@@ -5,10 +5,8 @@ spring:
     name: thraex-platform-config
   datasource:
     name: THRAEX-DB
-#    driverClassName: com.mysql.jdbc.Driver
     driver-class-name: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/thraex-config?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    url: jdbc:mysql://localhost:3306/thraex-config
+    url: jdbc:mysql://localhost:3306/thraex-config?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: mysql
   cloud:

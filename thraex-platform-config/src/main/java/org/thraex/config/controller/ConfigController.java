@@ -78,7 +78,7 @@ public class ConfigController {
     @GetMapping("detail/delete/{pid}/{id}")
     public String deleteProperties(@PathVariable String pid, @PathVariable String id) {
         configService.deleteProperties(id);
-        return "redirect:/config/detail/"+pid;
+        return "redirect:/config/detail/" + pid;
     }
 
 }
