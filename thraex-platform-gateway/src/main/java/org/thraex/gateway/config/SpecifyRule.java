@@ -5,21 +5,21 @@ import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
-import lombok.extern.log4j.Log4j2;
+import io.netty.util.internal.logging.Log4J2LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @Author 鬼王
  * @Date 2018/12/06 11:29
  */
-@Log4j2
 public class SpecifyRule extends AbstractLoadBalancerRule {
 
     public Server choose(ILoadBalancer lb, Object key) {
         if (lb == null) {
-            log.warn("no load balancer");
+            //log.warn("no load balancer");
             return null;
         }
 
@@ -31,7 +31,7 @@ public class SpecifyRule extends AbstractLoadBalancerRule {
             int serverCount = allServers.size();
 
             if ((upCount == 0) || (serverCount == 0)) {
-                log.warn("No up servers available from load balancer: " + lb);
+                //log.warn("No up servers available from load balancer: " + lb);
                 return null;
             }
 

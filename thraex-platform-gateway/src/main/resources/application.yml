@@ -10,8 +10,17 @@ spring:
         uri: lb://thraex-framework-admin
         predicates:
         - Path=/api/admin/**
+#        spring.cloud.gateway.routes-xx[0].id
+#        spring.cloud.gateway.routes-xx[0].uri
+#        spring.cloud.gateway.routes-xx[0].predicates --> Path=/api/other/**, Path=/api/other2/**
+#      routes-xx:
+#      - id: route-thraex-framework-admin1
+#        uri: lb://thraex-framework-admin1
+#        predicates:
+#        - Path=/api/ad1min/**
+#        - Path=/api/ad2min/**
       globalcors:
-        corsConfigurations:
+        cors-configurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"

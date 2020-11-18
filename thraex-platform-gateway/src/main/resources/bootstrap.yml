@@ -1,5 +1,6 @@
 spring:
   cloud:
     config:
-      uri: http://${CFG_CONFIG_HOST:${spring.cloud.client.ip-address}}:${CFG_CONFIG_PORT:8750}
-      profile: dev
+      uri: http://localhost:9000
+      profile: test
+      label: master
